@@ -16,25 +16,40 @@
 ## The following function extracts the participant identifier
 ## from a sample id/barcode.
 
+#' Extract participant ID from TCGA barcode
+#' @param id TCGA barcode
+#' @return participant ID
+#' @export
 extract.participant <- function(id) {
   sub("TCGA-[^-]+-([^-]+)-.*", "\\1", id)
 }
 
+#' Extract tissue ID from TCGA barcode
+#' @param id TCGA barcode
+#' @return tissue ID
+#' @export
 extract.tissue <- function(id) {
   sub("TCGA-[^-]+-[^-]+-([0-9]+)[^-]+-.*", "\\1", id)
 }
 
+#' Extract participant ID from TCGA barcode
+#' @param tar.file
+#' @param exract.gilr
+#' @param new.file
+#' @param resultsdir
+#' @return file details
+#' @export
 extract.file <- function(tar.file, extract.file, new.file, resultsdir) {
   # get file path to extracted file
   x.file <-
     grep(extract.file,
-      untar(tar.file, list = T),
+      utils::untar(tar.file, list = T),
       value = T
     )
     
   # extract the tar file
   cat("Extracting", tar.file, "to", new.file, "\n")
-  untar(tar.file, exdir=resultsdir, extras="--no-same-owner")
+  utils::untar(tar.file, exdir=resultsdir, extras="--no-same-owner")
   x.file = file.path(resultsdir,x.file)
 
   # move the data to named output
@@ -44,6 +59,11 @@ extract.file <- function(tar.file, extract.file, new.file, resultsdir) {
   unlink(dirname(x.file), recursive = TRUE)
 }
 
+#' Write a table detailing the required outputs
+#' @param x 
+#' @param filename 
+#' @return table
+#' @export
 my.write.table <- function(x, filename) {
   cat("saving", basename(filename), "...\n")
   write.table(x, file = filename, row.names = T, col.names = T, sep = "\t")
